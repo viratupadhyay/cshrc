@@ -1,0 +1,96 @@
+#set versions
+set intelversion = 11.1.073
+set compiler = gnu
+
+#set environment
+unset autologout
+set umask = 027
+set history=50
+set filec
+setenv LANG "en_US"
+setenv TMPDIR /tmp
+alias hi         "history"
+alias la         "ls -F -a -u"
+alias ll         "ls -F -l"
+alias df         "df -k"
+alias du         "du -k"
+alias psu        "ps -aux | grep -v root"
+alias psme       "ps -aux | grep $USER"
+alias a2ps       "a2ps -T 4 -1 -r -l 160 --line-numbers=1"
+alias emacs      "emacs -geometry 132x48"
+alias rsh        "ssh"
+alias less       "less -x4"
+limit coredumpsize 1
+
+# set prompt
+set ourhostname="`hostname|sed 's/^.*-//'` \!>"
+set baseprompt = `echo $ourhostname | tr . ' '`
+set baseprompt = ${baseprompt[1]}
+alias cd 'cd \!*;set prompt=${baseprompt}"(""`basename $cwd`"")> "'
+cd $cwd
+
+# Find architecture-dependent parameters
+if (`hostname -s` =~ f*) then
+	set intel = intel64
+	set nodes = f
+	set mpi   = mvapich2
+endif
+if (`hostname -s` =~ e*) then
+	set intel = intel64
+	set nodes = e
+	set mpi   = openmpi
+endif
+if (`hostname -s` =~ [bcd]*) then
+	set intel = ia32
+	set nodes = d
+	set mpi   = openmpi
+endif
+if (`hostname -s` =~ checs) then
+	set intel = intel64
+	set nodes = checs
+	set mpi   = mvapich2
+endif
+
+# Set architecture dependent paths
+set optpath  = /global/opt
+set libpath  = /global/lib/$nodes
+set appspath = /global/apps/$nodes
+set mpipath  = ${libpath}/${mpi}-${compiler}
+set javapath = /usr/java/default
+
+# Set paths to executables
+set path = (/bin /usr/bin /usr/X11R6/bin /usr/local/bin /usr/local/sbin /home/tladd/viratu/glvis2.0/)
+set path = (~/bin $appspath/bin $mpipath/bin $javapath/bin $path)
+set path = ($appspath/ddd/bin $path)
+set path = (/global/apps/checs/vmd/bin $path)
+set path = (/global/apps/checs/rsi/idl/bin $path)
+
+# Set up Intel compilers
+unsetenv LIBRARY_PATH DYLD_LIBRARY_PATH LIB LD_LIBRARY_PATH
+unsetenv CPATH FPATH MANPATH INCLUDE NLSPATH INTEL_LICENSE_FILE
+if ($compiler == "intel") then
+	source $optpath/intel/${intelversion}/bin/iccvars.csh $intel
+	source $optpath/intel/${intelversion}/bin/ifortvars.csh $intel
+else
+	setenv LD_LIBRARY_PATH
+	setenv MANPATH /usr/share/man
+endif
+
+# Set library paths
+set libs=(gsl fftw)						 # libs=(gsl atlas fftw mumps)
+set glibs=.
+foreach lib ($libs)
+	set glibs = (${glibs}:${libpath}/${lib}-${compiler}/lib)
+end
+setenv GLOBAL_LIB_PATH ${libpath}
+setenv LD_LIBRARY_PATH ${glibs}:${mpipath}/lib:${LD_LIBRARY_PATH}
+setenv MANPATH ${mpipath}/share/man:${MANPATH}
+
+#Set Python environment
+setenv PYTHONUSERBASE /home/ladd/viratu/epd-7.3-2
+setenv C_INCLUDE_PATH $PYTHONUSERBASE/include/python2.7
+set path = (. $PYTHONUSERBASE/bin $path)
+
+#Set OpenFOAM
+#setenv FOAM_INST_DIR ~sdale/OpenFOAM
+#source ~sdale/OpenFOAM/OpenFOAM-2.3.1/etc/cshrc foamCompiler=ThirdParty WM_MPLIB=OPENMPI

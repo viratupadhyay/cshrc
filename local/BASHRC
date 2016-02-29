@@ -1,0 +1,80 @@
+#!/bin/bash 
+
+# set prompt
+export PS1="\h:\u(\W)> "
+
+# set aliases etc.
+unset autologout
+export PRINTER=lj4000
+export umask=027
+export history=50
+export LANG="en_US"
+export TMPDIR=/tmp
+ulimit -c 1
+alias hi="history"
+alias ls="ls --color"
+alias la="ls -F -a -u"
+alias ll="ls -F -l"
+alias df="df -k"
+alias du="du -k"
+alias psu="ps -aux | grep -v root"
+alias psme="ps -aux | grep $USER"
+alias a2ps="a2ps -T 4 -1 -r -l 160 --line-numbers=1"
+alias emacs="emacs -geometry 132x48"
+alias less="less -x4"
+
+# Set paths to executables
+export PATH=$HOME/bin:/global/usr/bin:/bin:/usr/bin
+
+# set Tex environment
+year=2015
+export TEXDIR=/global/usr/apps/texlive/$year
+export TEXMFVAR=~/.texlive$year/texmf-var
+export TEXMFCONFIG=~/.texlive$year/texmf-config
+export TEXINPUTS=.:~/localTex/LaTex//:
+export BSTINPUTS=.:~/localTex/LaTex//:
+export BIBINPUTS=.:~/localTex/BibTex//:
+export MANPATH=$TEXDIR/texmf/doc/man:/global/usr/share/man:/usr/share/man
+export INFOPATH=$TEXDIR/texmf/doc/info
+export PATH=$TEXDIR/bin/x86_64-linux:$PATH
+
+# Set Python environment - Enthought
+base=$HOME/Enthought/Canopy_64bit/User
+export PYTHONUSERBASE=$base
+export PYTHONPATH=$base/lib/python2.7/site_packages
+export C_INCLUDE_PATH=$PYTHONUSERBASE/include
+export PATH=$base/bin:$PATH
+alias canopy="/global/usr/apps/Canopy/canopy"
+
+# Set alias for MPI - use environment modules
+MPI=MPICH
+source /usr/share/Modules/init/bash
+module purge
+if [ $MPI == MPICH ]; then
+    module load /global/usr/scripts/mpich-setenv
+fi
+if [ $MPI == OMPI ]; then
+    module load openmpi-x86_64
+fi
+
+# Set aliases for OpenFOAM environments
+FOAM=/global/usr/apps/FOAM
+OFVER=2.3.1
+OFDIR=$FOAM/OpenFOAM-$OFVER
+OFCC=ThirdParty                     # OpenFOAM uses 3rd-Party gcc
+OFGCC=Gcc48
+OFMPI=OPENMPI
+COMP="foamCompiler=$OFCC WM_COMPILER=$OFGCC WM_MPLIB=$OFMPI"
+LIBSRC="FOAM_USER_LIBSRC=/home/tladd/OpenFOAM/tladd-$OFVER/lib"
+ofenv=". $OFDIR/etc/bashrc $COMP $LIBSRC"
+if [ $OFMPI == SYSTEMOPENMPI ]; then
+    mod='module load openmpi-x86_64'
+    alias OFrc="export FOAM_INST_DIR=$FOAM; $mod; $ofenv"
+else
+    alias OFrc="export FOAM_INST_DIR=$FOAM; $ofenv"
+fi
+
+export GIT_ASKPASS=""
+
+# Set local directory first
+export PATH=.:$PATH

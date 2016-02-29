@@ -1,0 +1,81 @@
+# set versions
+set intelversion = 10.1.008
+set mklversion = 10.0.1.014
+set mpi  = none
+
+# set local environment
+setenv PRINTER lj4000
+setenv TEXINPUTS ~/LocalTex/LaTex//:
+setenv BSTINPUTS ~/LocalTex/LaTex//:
+setenv BIBINPUTS ~/LocalTex/BibTex//:
+setenv CVS_RSH ssh
+setenv CVSROOT :ext:ladd@cvsth.mpip-mainz.mpg.de/cvs/cvsroot 
+
+# set environment
+unset autologout
+set umask = 027
+set history=50
+set filec
+setenv LANG "en_US"
+setenv EXINIT 'set number | se sm sw=7 ts=4'
+setenv TMPDIR /tmp
+alias hi         "history"
+alias la         "ls -F -a -u"
+alias ll         "ls -F -l"
+alias df         "df -k"
+alias du         "du -k"
+alias psu        "ps -aux | grep -v root"
+alias psme       "ps -aux | grep $USER"
+alias emacs      "emacs -geometry 132x48"
+alias cdc        "cd /home/cec/$USER"
+alias xine       "xine --no-splash"
+limit coredumpsize 1
+
+# set prompt
+set ourhostname="`hostname|sed 's/^.*-//'` \!>"
+set baseprompt = `echo $ourhostname | tr . ' '`
+set baseprompt = ${baseprompt[1]}
+alias cd 'cd \!*;set prompt=${baseprompt}"(""`basename $cwd`"")> "'
+cd $cwd
+
+# Set architecture dependent paths
+set arch=`uname -i`
+endif
+if ( ${arch} == "x86_64" ) then
+	set bit = "64"
+	set mkl = "em64t"
+else
+	set bit = "32"
+	set mkl = "32"
+endif
+set optpath  = /global/opt/
+set libpath  = /global/lib/
+set optpath  = /global/opt/intel
+set appspath = /global/apps/
+set mpipath  = ${appspath}/${mpi}
+set javapath = /usr/java/default
+
+# Set paths to executables
+set path = (/bin /usr/bin /usr/X11R6/bin /usr/local/bin /usr/local/sbin)
+set path = (. $HOME/bin $appspath/bin $mpipath/bin $javapath/bin $path)
+
+# Set paths to server apps
+ls -l $optpath >& /dev/null
+if ($status == 0) then
+	source $optpath/cc/${intelversion}/bin/iccvars.csh
+	source $optpath/fc/${intelversion}/bin/ifortvars.csh
+	source $optpath/idb/${intelversion}/bin/idbvars.csh
+	source $optpath/mkl/${mklversion}/tools/environment/mklvars${mkl}.csh
+	setenv LD_LIBRARY_PATH ${libpath}:${mpipath}/lib:${LD_LIBRARY_PATH}
+	setenv MKL_LIBRARY_PATH /global/lib/mkl-${mklversion}/lib/${mkl}
+	setenv INTEL_LICENSE_FILE /global/opt/intel/licenses
+	setenv MANPATH /usr/share/man:$mpipath/man
+	setenv MANPATH $optpath/cc/${intelversion}/man:$MANPATH
+	setenv MANPATH $optpath/fc/${intelversion}/man:$MANPATH
+	setenv MANPATH $optpath/idb/${intelversion}/man:$MANPATH
+endif
+
+#Set Python environment
+setenv PYTHONUSERBASE /home/viratu/epd-7.1-2
+setenv C_INCLUDE_PATH $PYTHONUSERBASE/include/python*
+set path = (. $PYTHONUSERBASE/bin $path)

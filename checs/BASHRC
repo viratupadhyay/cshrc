@@ -1,0 +1,66 @@
+#!/bin/bash 
+
+# set prompt
+#export PS1="\h:\u(\W)> "
+export PS1="\u@\h:\w> "
+
+# set aliases etc.
+unset autologout
+export umask=027
+export history=50
+export LANG="en_US"
+export TMPDIR=/tmp
+ulimit -c 1
+alias hi="history"
+alias ls="ls --color"
+alias lfa="ls -F -a -u"
+alias la="ls -la"
+alias ll="ls -F -l"
+alias df="df -k"
+alias du="du -k"
+alias psu="ps -aux | grep -v root"
+alias psme="ps -aux | grep $USER"
+alias a2ps="a2ps -T 4 -1 -r -l 160 --line-numbers=1"
+alias emacs="emacs -geometry 132x48"
+alias less="less -x4"
+
+#alias OFrc ='source $HOME/OpenFOAM/OpenFOAM-2.3.0/etc/bashrc'  # source the official OpenFoam
+
+# Set paths to executables
+# : <<'COMMENT_BLOCK_END'
+export PATH="$HOME/local/bin:/global/usr/bin:/bin:/usr/bin:$PATH"
+
+export LIBRARY_PATH="$HOME/local/lib64:$HOME/local/lib"
+export LD_LIBRARY_PATH="$LIBRARY_PATH:$LD_LIBRARY_PATH"
+export C_LIB_PATH="$HOME/local/lib64:$HOME/local/lib:$C_LIB_PATH"
+export CMAKE_LIBRARY_PATH="/home/ladd/viratu/local/lib"
+
+export C_INCLUDE_PATH="$HOME/local/include:$C_INCLUDE_PATH"
+export CPLUS_INCLUDE_PATH="$HOME/local/include:$CPLUS_INCLUDE_PATH"
+export CMAKE_INCLUDE_PATH="/home/ladd/viratu/local/include"
+
+export PYTHONPATH="$HOME/local/lib/python2.7:$PYTHONPATH"
+export PYTHONPATH="$HOME/local/pythonhelpers:$PYTHONPATH"
+export FOAM_INST_DIR="/global/apps/f/FOAM"
+# COMMENT_BLOCK_END
+
+
+# local path
+#export PATH="/home/ladd/vstar/local1/bin/:/home/ladd/vstar/local1/include:/home/ladd/vstar/local1/lib:$PATH"
+#export PATH="/home/ladd/vstar/local2/bin:/home/ladd/vstar/local1/bin:$PATH"
+#export C_INCLUDE_PATH="/home/ladd/vstar/local2/include:/home/ladd/vstar/local1/include"
+#export CPLUS_INCLUDE_PATH="/home/ladd/vstar/local2/include:/home/ladd/vstar/local1/include"
+#export C_LIB_PATH="/home/ladd/vstar/local2/lib:/home/ladd/vstar/local1/lib"
+#export LIBRARY_PATH="$HOME/local2/lib:$HOME/local1/lib"
+#export LD_LIBRARY_PATH="$LIBRARY_PATH:$LD_LIBRARY_PATH"
+
+#export PATH="/home/ladd/vstar/local2/bin:/home/ladd/vstar/local1/bin:$PATH"
+#export C_INCLUDE_PATH="/home/ladd/vstar/local2/include:/home/ladd/vstar/local1/include"
+#export C_LIB_PATH="/home/ladd/vstar/local2/lib:/home/ladd/vstar/local1/lib"
+#export LIBRARY_PATH="$HOME/local1/lib"
+#export LD_LIBRARY_PATH="$LIBRARY_PATH:$LD_LIBRARY_PATH"
+
+#export C_INCLUDE_PATH=/home/ladd/vstar/local/include
+#export C_LIB_PATH=/home/ladd/vstar/local/lib
+
+#source /global/apps/f/FOAM/OpenFOAM-2.3.1/etc/bashrc
